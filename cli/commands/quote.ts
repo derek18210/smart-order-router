@@ -109,10 +109,10 @@ export class Quote extends BaseCommand {
         TradeType.EXACT_INPUT,
         recipient
           ? {
-              deadline: 100,
-              recipient,
-              slippageTolerance: new Percent(5, 10_000),
-            }
+            deadline: 100,
+            recipient,
+            slippageTolerance: new Percent(5, 10_000),
+          }
           : undefined,
         {
           blockNumber: this.blockNumber,
@@ -141,10 +141,10 @@ export class Quote extends BaseCommand {
         TradeType.EXACT_OUTPUT,
         recipient
           ? {
-              deadline: 100,
-              recipient,
-              slippageTolerance: new Percent(5, 10_000),
-            }
+            deadline: 100,
+            recipient,
+            slippageTolerance: new Percent(5, 10_000),
+          }
           : undefined,
         {
           blockNumber: this.blockNumber - 10,
@@ -169,8 +169,7 @@ export class Quote extends BaseCommand {
 
     if (!swapRoutes) {
       log.error(
-        `Could not find route. ${
-          debug ? '' : 'Run in debug mode for more info'
+        `Could not find route. ${debug ? '' : 'Run in debug mode for more info'
         }.`
       );
       return;
