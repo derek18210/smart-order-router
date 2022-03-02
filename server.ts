@@ -8,11 +8,6 @@ const app: Express = express();
 app.use(express.json());
 
 app.post('/quote', async (request: Request, response: Response) => {
-
-    // Import command from class path
-    // require('./cli/commands/quote')
-    const commandClass = require(`./cli/commands/quote.ts`);
-
     var tokenIn = request.body.tokenIn || '';
     var tokenOut = request.body.tokenOut || '';
     var amount = request.body.amount || '';
@@ -21,7 +16,7 @@ app.post('/quote', async (request: Request, response: Response) => {
     var router = request.body.alpha || '';
     var chainId = request.body.chainId || '';
 
-    var params = [];
+    var params: string[] = [];
     params.push("--tokenIn");
     params.push(tokenIn);
     params.push("--tokenOut");
@@ -38,7 +33,11 @@ app.post('/quote', async (request: Request, response: Response) => {
     params.push(chainId);
 
     // Execute command
-    response.status(200).json([await commandClass.run(params)]);
+    var something = await Quote.run(params);
+
+    console.log(something);
+
+    response.status(200).json();
 })
 
 
