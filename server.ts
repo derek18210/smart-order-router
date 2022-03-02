@@ -1,6 +1,5 @@
 
 import express, { Express, Request, Response } from 'express';
-import { Quote } from './cli/commands/quote';
 
 const port = 5050;
 
@@ -13,7 +12,7 @@ app.post('/quote', async (request: Request, response: Response) => {
     var amount = request.body.amount || '';
     var exactIn = request.body.exactIn || '';
     var minSplits = request.body.minSplits || '';
-    var router = request.body.alpha || '';
+    var router = request.body.router || '';
     var chainId = request.body.chainId || '';
 
     var params: string[] = [];
@@ -32,12 +31,20 @@ app.post('/quote', async (request: Request, response: Response) => {
     params.push("--chainId");
     params.push(chainId);
 
-    // Execute command
-    var something = await Quote.run(params);
+    const util = require('util');
+    const exec = util.promisify(require('child_process').exec);
 
-    console.log(something);
+    async function q() {
 
-    response.status(200).json();
+        const { stdout } = await exec(`./bin/cli quote --tokenIn ${tokenIn} --tokenOut ${tokenOut} --amount ${amount} --exactIn ${exactIn} --minSplits ${minSplits} --router ${router} --chainId ${chainId}`);
+
+        console.log('stdout:', stdout);
+
+        return stdout;
+    }
+    var result = await q();
+
+    response.status(200).json(result);
 })
 
 
