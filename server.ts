@@ -1,5 +1,7 @@
 
 import express, { Express, Request, Response } from 'express';
+import { QuoteRequestParams } from './QuoteRequest'
+import { QuoteResponse } from './QuoteResponse'
 
 const port = 5050;
 
@@ -14,22 +16,31 @@ app.post('/quote', async (request: Request, response: Response) => {
     var minSplits = request.body.minSplits || '';
     var router = request.body.router || '';
     var chainId = request.body.chainId || '';
+    var type = request.body.type || '';
+    var recipient = request.body.recipient || '';
+    var slippageTolerance = request.body.slippageTolerance || '';
+    var deadline = request.body.deadline || '';
+    var algorithm = request.body.algorithm || '';
+    var gasPriceWei = request.body.gasPriceWei || '';
+    var forceCrossProtocol = request.body.forceCrossProtocol || false;
+    var protocols = request.body.protocols || '';
 
-    var params: string[] = [];
-    params.push("--tokenIn");
-    params.push(tokenIn);
-    params.push("--tokenOut");
-    params.push(tokenOut);
-    params.push("--amount");
-    params.push(amount);
-    params.push("--exactIn");
-    params.push(exactIn);
-    params.push("--minSplits");
-    params.push(minSplits);
-    params.push("--router");
-    params.push(router);
-    params.push("--chainId");
-    params.push(chainId);
+    const quoteReqParams: QuoteRequestParams = {
+        tokenInAddress: tokenIn,
+        tokenInChainId: chainId,
+        tokenOutAddress: tokenOut,
+        tokenOutChainId: 1,
+        amount: amount,
+        type: type,
+        recipient: recipient,
+        slippageTolerance: slippageTolerance,
+        deadline: deadline,
+        algorithm: algorithm,
+        gasPriceWei: gasPriceWei,
+        minSplits: minSplits,
+        forceCrossProtocol: forceCrossProtocol,
+        protocols: protocols
+    }
 
     const util = require('util');
     const exec = util.promisify(require('child_process').exec);
@@ -44,7 +55,26 @@ app.post('/quote', async (request: Request, response: Response) => {
     }
     var result = await q();
 
-    response.status(200).json(result);
+    const quoteResponse: QuoteResponse = {
+        quoteId: '123',
+        amount: null,
+        amountDecimals: null,
+        quote: null,
+        quoteDecimals: null,
+        quoteGasAdjusted: null,
+        quoteGasAdjustedDecimals: null,
+        gasUseEstimate: null,
+        gasUseEstimateQuote: null,
+        gasUseEstimateQuoteDecimals: null,
+        gasUseEstimateUSD: null,
+        gasPriceWei: null,
+        blockNumber: null,
+        route: null,
+        routeString: null,
+        methodParameters: null
+    }
+
+    response.status(200).json(quoteResponse);
 })
 
 
