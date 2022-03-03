@@ -48,12 +48,30 @@ app.post('/quote', async (request: Request, response: Response) => {
 })
 
 
-app.get('/quoteToRatio', (request: Request, response: Response) => {
-    console.log(request.cookies);
+app.post('/quoteToRatio', async (request: Request, response: Response) => {
+    var token0 = request.body.token0 || '';
+    var token1 = request.body.token1 || '';
+    var feeAmount = request.body.feeAmount || '';
+    var recipient = request.body.recipient || '';
+    var token0Balance = request.body.token0Balance || '';
+    var token1Balance = request.body.token1Balance || '';
+    var tickLower = request.body.tickLower || '';
+    var tickUpper = request.body.tickUpper || '';
 
+    const util = require('util');
+    const exec = util.promisify(require('child_process').exec);
 
-    response.type('text/plain');
-    response.send('/quoteToRatio');
+    async function q() {
+
+        const { stdout } = await exec(`./bin/cli quote-to-ratio --token0 ${token0} --token1 ${token1} --feeAmount ${feeAmount} --recipient ${recipient} --token0Balance ${token0Balance} --token1Balance ${token1Balance} --tickLower ${tickLower} --tickUpper ${tickUpper}`);
+
+        console.log('stdout:', stdout);
+
+        return stdout;
+    }
+    var result = await q();
+
+    response.status(200).json(result);
 })
 
 app.listen(port, () => {
